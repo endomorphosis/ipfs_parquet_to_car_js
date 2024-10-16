@@ -1,0 +1,29 @@
+{
+  "name": "ipfs_parquet_to_car",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "offload datasets tasks to IPFS/libp2p",
+  "main": "index.js",
+  "scripts": {
+    "test": " node tests/test.js"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.5",
+    "@pnpm/exe": "^9.9.0",
+    "ipfs_kit_js": "^1.0.22",
+    "ipfs_model_manager_js": "^1.0.9",
+    "libp2p_kit_js": "^1.0.12",
+    "orbitdb_kit_js": "^1.0.9",
+    "pnpm": "^9.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/endomorphosis/ipfs_parquet_to_car_js.git"
+  },
+  "author": "Benjamin Barber",
+  "license": "AGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/endomorphosis/ipfs_parquet_to_car_js/issues"
+  },
+  "homepage": "https://github.com/endomorphosis/ipfs_parquet_to_car_js#readme"
+}
