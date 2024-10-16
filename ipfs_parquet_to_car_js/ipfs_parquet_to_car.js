@@ -38,5 +38,5 @@ export class ipfsParquetToCarJs{
 }
 export default ipfsParquetToCarJs;
 
-const ipfsParquetToCarJs = new ipfsParquetToCarJs();
-ipfsParquetToCarJs.test();
+const testIpfsParquetToCarJs = new ipfsParquetToCarJs();
+testIpfsParquetToCarJs.test();
