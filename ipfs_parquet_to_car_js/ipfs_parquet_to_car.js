@@ -9,10 +9,16 @@ import * as raw from 'multiformats/codecs/raw'
 import { CID } from 'multiformats/cid'
 import { sha256 } from 'multiformats/hashes/sha2'
 
+
 export class ipfsParquetToCarJs{
     constructor(resources, metadata){
         this.resources = resources;
         this.metadata = metadata;
+        this.car_archive = null;
+        this.parquet_archive = null;
+        this.cids = [];
+        this.bytes = [];
+        this.hash = [];
     }
 
     async convert_to_car(parquet_file){
@@ -24,7 +30,25 @@ export class ipfsParquetToCarJs{
             let record = null;
             while (record = await cursor.next()) {
                 console.log(record);
+                let json_record = JSON.stringify(record);
+                let bytes = new TextEncoder().encode(json_record);
+                this.bytes.push(bytes);
+                let hash = await sha256.digest(bytes);
+                this.hash.push(hash);
+                let cid = CID.create(1, raw.code, hash);
+                this.cids.push(cid);
             }
+            let all_bytes = Buffer.concat(this.bytes);
+            let all_hash = await sha256.digest(all_bytes);
+            let all_cid = CID.create(1, raw.code, all_hash);
+            let { writer, out } = await CarWriter.create([all_cid])
+            let output_file = path.join(this_dir, 'example.car');
+            Readable.from(out).pipe(fs.createWriteStream(output_file))
+            const len_cids = this.cids.length;
+            for (let i = 0; i < len_cids; i++){
+                await writer.put(this.cids[i], this.bytes[i]);
+            }
+            writer.close();
         }catch(e){
             console.log(e);
         }
@@ -37,7 +61,7 @@ export class ipfsParquetToCarJs{
 
     async test(){
         console.log("Hello from ipfs_parquet_to_car.js");
-        let parquet_file = "bafkreidnskbqrb2uthybtvt7fazaxlzbdemci7acbozcfh2akerz6ujeza.parquet";
+        let parquet_file = "test-00000-of-00001.parquet";
         try{
             await this.convert_to_car(parquet_file);
         }
