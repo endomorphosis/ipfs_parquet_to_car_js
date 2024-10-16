@@ -8,6 +8,7 @@
     "test": " node tests/test.js"
   },
   "dependencies": {
+    "@dsnp/parquetjs": "^1.8.5",
     "@electric-sql/pglite": "^0.2.5",
     "@pnpm/exe": "^9.9.0",
     "ipfs_kit_js": "^1.0.22",
