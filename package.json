@@ -10,10 +10,12 @@
   "dependencies": {
     "@dsnp/parquetjs": "^1.8.5",
     "@electric-sql/pglite": "^0.2.5",
+    "@ipld/car": "^5.3.2",
     "@pnpm/exe": "^9.9.0",
     "ipfs_kit_js": "^1.0.22",
     "ipfs_model_manager_js": "^1.0.9",
     "libp2p_kit_js": "^1.0.12",
+    "multiformats": "^13.3.0",
     "orbitdb_kit_js": "^1.0.9",
     "pnpm": "^9.9.0"
   },

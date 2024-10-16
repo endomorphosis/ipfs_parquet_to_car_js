@@ -1,4 +1,13 @@
 import parquetjs from '@dsnp/parquetjs';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { Buffer } from 'buffer';
+import { Readable } from 'stream'
+import { CarReader, CarWriter } from '@ipld/car'
+import * as raw from 'multiformats/codecs/raw'
+import { CID } from 'multiformats/cid'
+import { sha256 } from 'multiformats/hashes/sha2'
 
 export class ipfsParquetToCarJs{
     constructor(resources, metadata){
@@ -8,7 +17,9 @@ export class ipfsParquetToCarJs{
 
     async convert_to_car(parquet_file){
         try{
-            const parquet = await parquetjs.ParquetReader.openFile(parquet_file);
+            const this_dir = path.dirname(import.meta.url).replace('file://', '');
+            const parquet_path = path.join(this_dir, parquet_file);
+            const parquet = await parquetjs.ParquetReader.openFile(parquet_path);
             const cursor = parquet.getCursor();
             let record = null;
             while (record = await cursor.next()) {
@@ -26,7 +37,7 @@ export class ipfsParquetToCarJs{
 
     async test(){
         console.log("Hello from ipfs_parquet_to_car.js");
-        parquet_file = "bafkreidnskbqrb2uthybtvt7fazaxlzbdemci7acbozcfh2akerz6ujeza.parquet";
+        let parquet_file = "bafkreidnskbqrb2uthybtvt7fazaxlzbdemci7acbozcfh2akerz6ujeza.parquet";
         try{
             await this.convert_to_car(parquet_file);
         }
