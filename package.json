@@ -11,6 +11,7 @@
     "@dsnp/parquetjs": "^1.8.5",
     "@electric-sql/pglite": "^0.2.5",
     "@ipld/car": "^5.3.2",
+    "@ipld/dag-cbor": "^9.2.1",
     "@pnpm/exe": "^9.9.0",
     "ipfs_kit_js": "^1.0.22",
     "ipfs_model_manager_js": "^1.0.9",
