@@ -24,7 +24,16 @@ export class ipfsParquetToCarJs{
     async convert_parquet_to_car(parquet_file, dst_path=null){
         try{
             const this_dir = path.dirname(import.meta.url).replace('file://', '');
-            const parquet_path = path.join(this_dir, parquet_file);
+            let parquet_path = parquet_file;
+            if (!parquet_path.startsWith('/')){
+                parquet_path = path.join(this_dir, parquet_path);
+            }
+            if (!dst_path){
+                dst_path = parquet_path.replace('.parquet', '.car');
+            }
+            else if (!dst_path.startsWith('/')){
+                dst_path = path.join(this_dir, dst_path);
+            }
             const parquet = await parquetjs.ParquetReader.openFile(parquet_path);
             const cursor = parquet.getCursor();
             let record = null;
@@ -59,64 +68,55 @@ export class ipfsParquetToCarJs{
         }
     }
 
-
-    async example() {
-        const bytes = new TextEncoder().encode('random meaningless bytes')
-        const hash = await sha256.digest(raw.encode(bytes))
-        const cid = CID.create(1, raw.code, hash)
-    
-        // create the writer and set the header with a single root
-        const { writer, out } = await CarWriter.create([cid])
-        Readable.from(out).pipe(fs.createWriteStream('example.car'))
-    
-        // store a new block, creates a new file entry in the CAR archive
-        await writer.put({ cid, bytes })
-
-        const bytes2 = new TextEncoder().encode('more random meaningless bytes')
-        const hash2 = await sha256.digest(raw.encode(bytes2))
-        const cid2 = CID.create(1, raw.code, hash2)
-        await writer.put({ cid: cid2, bytes: bytes2 })
-        
-        await writer.close()
-    
-
-
-        const inStream = fs.createReadStream('example.car')
-        // read and parse the entire stream in one go, this will cache the contents of
-        // the car in memory so is not suitable for large files.
-        const reader = await CarReader.fromIterable(inStream)
-    
-        // read the list of roots from the header
-        const roots = await reader.getRoots()
-        // retrieve a block, as a { cid:CID, bytes:UInt8Array } pair from the archive
-        const got = await reader.get(roots[0])
-        // also possible: for await (const { cid, bytes } of CarIterator.fromIterable(inStream)) { ... }
-    
-        console.log(
-        'Retrieved [%s] from example.car with CID [%s]',
-        new TextDecoder().decode(got.bytes),
-        roots[0].toString()
-        )
-    }
-    
-
-
-    async convert_to_parquet(){
-
+    async convert_car_to_parquet(car_file, dst_path=null){
+        try{
+            let car_path = car_file;
+            const this_dir = path.dirname(import.meta.url).replace('file://', '');
+            if (!car_path.startsWith('/')){
+                car_path = path.join(this_dir, car_path);
+            }
+            if (!dst_path){
+                dst_path = car_path.replace('.car', '.parquet');
+            }
+            else if (!dst_path.startsWith('/')){
+                dst_path = path.join(this_dir, dst_path);
+            }
+            const inStream = fs.createReadStream(car_path);
+            const reader = await CarReader.fromIterable(inStream);
+            const roots = await reader.getRoots();
+            const len_roots = roots.length;
+            var schema = new parquetjs.ParquetSchema({
+                items: {
+                    type: 'UTF8',
+                }
+            });
+            var writer = await parquetjs.ParquetWriter.openFile(schema, 'fruits.parquet');
+            for (let i = 0; i < len_roots; i++){
+                let root = roots[i];
+                let got = await reader.get(root);
+                let json_record = new TextDecoder().decode(got.bytes);
+                let record = JSON.parse(json_record);
+                await writer.appendRow({items: json_record});
+            }
+            writer.close();
+        }catch(e){
+            console.log(e);
+        }
     }
 
     async test(){
         console.log("Hello from ipfs_parquet_to_car.js");
         let parquet_file = "bafkreidnskbqrb2uthybtvt7fazaxlzbdemci7acbozcfh2akerz6ujeza.parquet";
-        // try{
-        //     await this.example()
-        // }
-        // catch(e){
-        //     console.log(e);
-        // }
+        let car_file = "bafkreidnskbqrb2uthybtvt7fazaxlzbdemci7acbozcfh2akerz6ujeza.car";
+        try{
+            await this.convert_car_to_parquet(car_file, 'example.parquet');
+        }
+        catch(e){
+            console.log(e);
+        }
 
         try{
-            await this.convert_to_car(parquet_file);
+            await this.convert_parquet_to_car(parquet_file, 'example.car');
         }
         catch(e){
             console.log(e);
