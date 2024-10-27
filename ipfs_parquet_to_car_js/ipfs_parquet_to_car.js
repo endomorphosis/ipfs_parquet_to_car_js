@@ -120,18 +120,19 @@ export class ipfsParquetToCarJs {
 			}
 			const inStream = fs.createReadStream(car_path);
 			const reader = await CarReader.fromIterable(inStream);
-			const roots = await reader.getRoots();
 			let records = [];
-			for (let root of roots) {
-				let got = await reader.get(root);
+
+			// Iterate over all blocks instead of just the roots
+			for await (const { cid, bytes } of reader.blocks()) {
 				const block = await Block.decode({
-					bytes: got.bytes,
+					bytes,
 					codec: codec,
 					hasher: sha256,
 				});
 				let record = block.value;
 				records.push(record);
 			}
+
 			// Infer schema from records using the recursive function
 			let schemaFields = {};
 			if (records.length > 0) {
@@ -167,6 +168,7 @@ export class ipfsParquetToCarJs {
 		} catch (e) {
 			console.log(e);
 		}
+
 	}
 }
 export default ipfsParquetToCarJs;
