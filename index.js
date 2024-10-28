@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 export * from './ipfs_parquet_to_car_js/ipfs_parquet_to_car.js';
 import { ipfsParquetToCarJs } from './ipfs_parquet_to_car_js/ipfs_parquet_to_car.js';
 export { ipfsParquetToCarJs } from './ipfs_parquet_to_car_js/ipfs_parquet_to_car.js';
