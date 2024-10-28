@@ -10,14 +10,14 @@ export class test_parquet_to_car_js{
     }
 
     async test(){
-        console.log("Hello from test.js");
+        let results = {};
         try{
-            await this.ipfsParquetToCarJs.test();
+            results["test"] = await this.ipfsParquetToCarJs.test();
         }
         catch(e){
             console.log(e);
         }
-        return "Test complete";
+        return results;
     }
 }
 

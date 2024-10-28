@@ -195,8 +195,10 @@ export class ipfsParquetToCarJs {
 				await writer.put({ cid: this_cid, bytes: this_bytes });
 			}
 			writer.close();
+            return true
 		} catch (e) {
 			console.log(e);
+            return false;
 		}
 	}
 
@@ -251,23 +253,34 @@ export class ipfsParquetToCarJs {
 				await writer.appendRow(record);
 			}
 			await writer.close();
+            return true;
 		} catch (e) {
 			console.log(e);
+            return false;
 		}
 	}
 
 	async test() {
-		console.log('Hello from ipfs_parquet_to_car.js');
 		let parquet_file =
 			'bafkreidnskbqrb2uthybtvt7fazaxlzbdemci7acbozcfh2akerz6ujeza.parquet';
 		let car_file =
 			'bafkreidnskbqrb2uthybtvt7fazaxlzbdemci7acbozcfh2akerz6ujeza.car';
 
+        let results = {};
 		try {
-			await this.convert_parquet_to_car(parquet_file, 'example.car');
+            results['parquet_to_car'] = await this.convert_parquet_to_car(parquet_file, 'example.car');
 		} catch (e) {
+            results['parquet_to_car'] = e;
 			console.log(e);
 		}
+
+        try {
+            results['car_to_parquet'] = await this.convert_car_to_parquet(car_file, 'example.parquet');
+        } catch (e) {
+            results['car_to_parquet'] = e;
+            console.log(e);
+        }
+        return results;
 	}
 }
 export default ipfsParquetToCarJs;

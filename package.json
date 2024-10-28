@@ -5,7 +5,7 @@
   "description": "offload datasets tasks to IPFS/libp2p",
   "main": "index.js",
   "scripts": {
-    "test": " node tests/test.js"
+    "test": " node test/test.js"
   },
   "dependencies": {
     "@dsnp/parquetjs": "^1.8.5",
